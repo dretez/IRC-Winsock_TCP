@@ -12,6 +12,8 @@ mensagem recebida).
 #include <string.h>
 #include <winsock.h>
 
+#include "ex2.h"
+
 #pragma comment(lib,  "Ws2_32.lib")
 
 #define SERV_TCP_PORT  6000
@@ -80,7 +82,7 @@ void AtendeCliente(SOCKET sock){
 	int nbytes, nBytesSent;
 		
 	/*==================== PROCESSA PEDIDO ==========================*/
-	switch((nbytes=recv(sock, buffer, BUFFERSIZE-1, 0))){
+	switch((nbytes=readLine(sock, buffer, BUFFERSIZE))){
 
 		case SOCKET_ERROR:
 			fprintf(stderr,"\n<SER> Erro na recepcao de dados...\n");
@@ -99,7 +101,7 @@ void AtendeCliente(SOCKET sock){
 			sprintf_s(buffer, BUFFERSIZE, "%d", nbytes);
 			nbytes=strlen(buffer);
 
-			if((nBytesSent=send(sock, buffer, nbytes, 0)) == SOCKET_ERROR)
+			if((nBytesSent=writeN(sock, buffer, nbytes)) == SOCKET_ERROR)
 				fprintf(stderr,"<SER> Impossibilidade de Confirmar.\n");
 			else if(nBytesSent<nbytes)
 				fprintf(stderr,"<SER> Mensagem confirmada, mas truncada.\n");
@@ -125,3 +127,4 @@ void Abort(char *msg, SOCKET s)
 
 	exit(EXIT_FAILURE);
 }
+

@@ -11,6 +11,8 @@ O protocolo usado e' o TCP.
 #include <stdlib.h>
 #include <winsock.h>
 
+#include "ex2.h"
+
 #pragma comment(lib,  "Ws2_32.lib")
 
 #define BUFFERSIZE     4096
@@ -58,7 +60,7 @@ int main(int argc,char *argv[]){
 	/*====================== ENVIA MENSAGEM AO SERVIDOR ==================*/
 	msg_len=strlen(argv[1]);
 
-	if((nbytes=send(sock, argv[1], msg_len, 0)) == SOCKET_ERROR)
+	if((nbytes=writeN(sock, argv[1], msg_len, 0)) == SOCKET_ERROR)
 		Abort("Impossibilidade de transmitir mensagem...", sock);
 	else if(nbytes < msg_len)
 		fprintf(stderr, "<CLI> Mensagem truncada...\n");
@@ -66,7 +68,7 @@ int main(int argc,char *argv[]){
 		fprintf(stderr, "<CLI> Mensagem \"%s\" enviada\n", argv[1]);
 	
 	/*========================== ESPERA CONFIRMACAO =======================*/
-	nbytes=recv(sock, buffer, sizeof(buffer)-1, 0);
+	nbytes=readLine(sock, buffer, sizeof(buffer)-1);
 
 	if(nbytes == SOCKET_ERROR) 
 		Abort("Impossibilidade de receber confirmacao", sock);
